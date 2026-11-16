@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
-  "base_url": "https://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz",
+  "base_url": "https://mirrors.dotsrc.org/archlinuxarm/os/ArchLinuxARM-aarch64-latest.tar.gz",
+  "base_policy": "HTTPS bootstrap from the same mirror as Nyarch; SHA256 recorded per build; signed pacman repositories",
   "desktop": "kde",
   "locale": {
     "lang": "zh_CN.UTF-8",
