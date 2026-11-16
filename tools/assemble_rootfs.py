@@ -73,7 +73,8 @@ def plan(args, root=ROOT):
     result = {'status': 'HOST_RECIPE_CANDIDATE', 'distro': args.distro, 'desktop': args.desktop, 'output': str(output),
               'target': {'distro': args.distro, 'suite': args.suite or profile['suite'], 'arch': 'aarch64'},
               'profile': profile, 'desktop_profile': desktop, 'missing_inputs': [], 'device_tested': False,
-              'scale_percent': args.scale_percent, 'bsp': None, 'layers': []}
+              'scale_percent': args.scale_percent, 'bsp': None, 'layers': [],
+              'extra_packages': list(args.extra_package)}
     result['storage'] = json.loads((profiles / 'storage.json').read_text())
     if state == 'unavailable':
         return {**result, 'status': 'UNAVAILABLE', 'reason': 'No reviewed package recipe for this distro/desktop pair'}
@@ -282,7 +283,7 @@ def execute(result):
             (root / 'run/pacman-build.conf').write_text(
                 re.sub(r'^\s*CheckSpace\s*$', '# CheckSpace (build chroot)', conf.read_text(), flags=re.M))
             guest(['pacman-key', '--init']); guest(['pacman-key', '--populate', 'archlinuxarm']); guest(['pacman', '-Syu', '--noconfirm'])
-        packages = profile['base_packages'] + result['desktop_profile'][manager + '_packages']; optional = []
+        packages = profile['base_packages'] + result['desktop_profile'][manager + '_packages'] + result['extra_packages']; optional = []
         for package in packages + result['desktop_profile'].get('optional_packages', []):
             found = apt_available(guest(['apt-cache', 'policy', package], text=True)) if manager == 'apt' else guest(['pacman', '-Si', package], check=False).returncode == 0
             if not found and package in packages: raise ValueError('UNAVAILABLE target desktop package: ' + package)
@@ -343,6 +344,7 @@ def parser():
     for name in ('output', 'base-file', 'base-keyring', 'keyring', 'sources-list', 'bsp'): value.add_argument('--' + name, type=Path)
     for name in ('suite', 'base-url', 'base-sha256', 'base-signature-url', 'base-keyring-sha256'): value.add_argument('--' + name)
     value.add_argument('--layer', action='append', type=Path, default=[]); value.add_argument('--scale-percent', type=int, default=200)
+    value.add_argument('--extra-package', action='append', default=[])
     mode = value.add_mutually_exclusive_group(required=True); mode.add_argument('--plan', action='store_true'); mode.add_argument('--execute', action='store_true')
     value.add_argument('--worker', action='store_true', help=argparse.SUPPRESS); return value
 

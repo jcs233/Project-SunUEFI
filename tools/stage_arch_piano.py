@@ -41,9 +41,11 @@ def stage(args):
     if (helper_kernel['commit'], helper_kernel['release']) != (
             kernel['source_commit'], kernel['kernel_release']):
         raise ValueError('Rebuild the runtime helpers for the selected kernel')
-    steamos = getattr(args, 'desktop', 'nyarch') == 'steamos'
+    desktop = getattr(args, 'desktop', 'nyarch')
+    steamos = desktop == 'steamos'
+    kde = desktop in ('steamos', 'kde')
     userspace.stage(root, ROOT / cfg['debian']['source'],
-                    desktop='kde' if steamos else 'gnome')
+                    desktop='kde' if kde else 'gnome')
     # These are generated files in the build root; refresh them on --resume.
     adapters = output / 'piano-adapters'
     if adapters.exists():
@@ -92,7 +94,7 @@ def stage(args):
     (root / 'usr/lib/systemd/system/ssh.service.d/piano.conf').unlink(missing_ok=True)
     # Standard libinput hardware defaults; no desktop-specific name spoofing.
     release.apply_policy(root, output, cfg)
-    if not steamos:
+    if not kde:
         put(root, 'usr/share/gnome-settings-daemon/ambient-profiles/piano.ini',
             (ROOT / 'linux/desktops/gnome/ambient-policy/piano.ini').read_text())
     put(root, 'etc/piano/linux-debug.conf', 'usb=acm-ncm\nshell=1\nrecovery_seconds=0\n')
@@ -117,13 +119,15 @@ def stage(args):
         guest(['systemctl', 'mask', 'hibernate.target',
                'hybrid-sleep.target', 'suspend-then-hibernate.target',
                'adsprpcd.service', 'adsprpcd_audiopd.service'])
-        guest(['systemctl', 'enable', 'sddm' if steamos else 'gdm', 'NetworkManager', 'sshd', 'bluetooth',
+        guest(['systemctl', 'enable', 'sddm' if kde else 'gdm', 'NetworkManager', 'sshd', 'bluetooth',
                'piano-camerad', 'piano-hostkeys', 'adsprpcd-sensorspd'])
         guest(['systemctl', 'set-default', 'graphical.target'])
         guest(['depmod', '-a', kernel['kernel_release']])
     if steamos:
         from stage_steamos_desktop import configure
-        desktop = configure(root)
+        desktop_config = configure(root)
+    elif kde:
+        desktop_config = {'desktop': 'kde'}
     else:
         from prepare_nyarch_material import prepare, UUID
         extension_bundle = output / 'nyarch-shell-extensions'
@@ -131,7 +135,7 @@ def stage(args):
             shutil.rmtree(extension_bundle)
         shutil.copytree(args.extensions, extension_bundle)
         prepare(args.desktop_source.resolve(), root, extension_bundle / UUID)
-        desktop = nyarch.stage(root, args.desktop_source, extension_bundle)
+        desktop_config = nyarch.stage(root, args.desktop_source, extension_bundle)
     clock = release.clock_epoch(root)
     release.native_boot_request(root, output)
     # Fixed Debian tools build the shared bootstrap outside the Arch root.
@@ -159,12 +163,12 @@ def stage(args):
     packages = subprocess.check_output(['chroot', root, 'pacman', '-Q'], text=True)
     (output / 'packages.tsv').write_text(packages)
     record = {'status': 'HOST_BUILT_ROOT_NOT_BOOT_VERIFIED',
-              'distro': 'steamos' if steamos else 'nyarch',
+              'distro': 'steamos' if steamos else ('arch-kde' if kde else 'nyarch'),
               'base': 'Valve SteamOS ARM64' if steamos else 'Arch Linux ARM rolling',
-              'desktop': 'kde' if steamos else 'gnome', 'kernel_release': kernel['kernel_release'],
+              'desktop': 'kde' if kde else 'gnome', 'kernel_release': kernel['kernel_release'],
               'kernel_commit': kernel['source_commit'], 'kernel_manifest_sha256': kernel_hash,
               'root_policy': 'LABEL=PIANOROOT', 'login': cfg['login'],
-              'desktop_configuration': desktop, 'initramfs': boot, 'clock_epoch': clock,
+              'desktop_configuration': desktop_config, 'initramfs': boot, 'clock_epoch': clock,
               'firmware_components': cfg['firmware']['components'],
               'packages_sha256': release.digest(output / 'packages.tsv'),
               'runtime_manifest_sha256': release.digest(args.runtime / 'manifest.json')}
@@ -175,7 +179,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('rootfs', 'kernel', 'runtime', 'sensor-source', 'bootstrap-sysroot'):
         parser.add_argument('--' + name, type=Path, required=True)
-    parser.add_argument('--desktop', choices=('nyarch', 'steamos'), default='nyarch')
+    parser.add_argument('--desktop', choices=('nyarch', 'steamos', 'kde'), default='nyarch')
     parser.add_argument('--desktop-source', type=Path)
     parser.add_argument('--extensions', type=Path, default=ROOT / 'build/nyarch-extensions')
     parser.add_argument('--worker', action='store_true', help=argparse.SUPPRESS)

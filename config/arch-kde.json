@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "base_url": "https://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz",
+  "desktop": "kde",
+  "locale": {
+    "lang": "zh_CN.UTF-8",
+    "language": "zh_CN:zh",
+    "timezone": "Asia/Shanghai",
+    "keymap": "us"
+  },
+  "input_method": {
+    "packages": ["noto-fonts-cjk", "ibus", "ibus-libpinyin"],
+    "environment": {
+      "GTK_IM_MODULE": "ibus",
+      "QT_IM_MODULE": "ibus",
+      "XMODIFIERS": "@im=ibus",
+      "SDL_IM_MODULE": "ibus"
+    },
+    "autostart": "ibus-daemon -drxR"
+  }
+}

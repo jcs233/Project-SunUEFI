@@ -29,7 +29,7 @@ UEFI_FILES = {'requirements-build.txt', 'tools/build_android_product_module.py',
               'tools/product_payload_digest.py', 'tools/piano_vendor_inputs.py'}
 UEFI_PREFIXES = ('android/', 'uefi/', 'vendor/piano/', 'patches/firmware/',
                  'tools/prepare_product_')
-DISTROS = ['debian-gnome', 'debian-kde', 'nyarch-gnome', 'steamos']
+DISTROS = ['debian-gnome', 'debian-kde', 'nyarch-gnome', 'arch-kde', 'steamos']
 TARGETS = ('uefi', 'linux', *DISTROS)
 
 

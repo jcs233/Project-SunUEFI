@@ -14,7 +14,7 @@
 | `SunUEFI-ESP` | `esp.sparse.img` | 启动镜像（ESP） |
 | `SunUEFI-Root-发行版` | `root-发行版.sparse.img` | 系统镜像（root） |
 
-发行版可选 `debian-gnome`、`debian-kde`、`nyarch-gnome` 或 `steamos`。ESP 和模块各只有一份，四个系统共用。手动选择 `uefi` 或 `linux` 的开发构建不含完整系统。`SunUEFI-UEFI-Fastboot` 只用于[临时启动](temporary-boot.md)，`logs` 用于排查构建问题，安装时都不需要。
+发行版可选 `debian-gnome`、`debian-kde`、`nyarch-gnome`、`arch-kde` 或 `steamos`。ESP 和模块各只有一份，五个系统共用。手动选择 `uefi` 或 `linux` 的开发构建不含完整系统。`SunUEFI-UEFI-Fastboot` 只用于[临时启动](temporary-boot.md)，`logs` 用于排查构建问题，安装时都不需要。
 
 把模块 ZIP 和两个镜像文件保存在平板上。模块 ZIP 不要解压，镜像文件放在任意位置，之后在助手里用文件选择器选取。刷写稀疏镜像需要 0.5.2 或更新的助手。
 

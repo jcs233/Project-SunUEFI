@@ -38,7 +38,7 @@ Linux 内核补丁按内核版本分目录维护在 `patches/linux/`，通过 `p
 
 软件包系列使用 `patches/<包>/<版本>/series.json`。`patches` 列表按顺序应用，条目的 `file` 相对该系列目录解析；FFmpeg 的现有 `series` / `path` 格式含义相同。同一修复适用于多个版本时，系列引用同一份文件，不再复制补丁。跨版本路径可以使用 `../`，但不能离开仓库。
 
-`targets` 登记使用该版本的 CI 产品名，以 `tools/ci_build_targets.py` 中的 `TARGETS` 为准：固件和内核分别可选 `uefi`、`linux`，根系统使用四个发行版目标。PipeWire 的 Debian 两桌面使用 1.6.9，Nyarch 使用 1.6.11，SteamOS 使用 1.6.8。GTK 3.24.52、IBus 1.5.34、KWin 6.6.5 和 Mesa 27.0 的本地系列由 SteamOS 配方使用。Nyarch 的 Material You Colors 30 和 Blur my Shell 75、SteamOS 的 KScreen 6.6.5 和 Manager 26.4.1 也通过各自版本的系列选择补丁。
+`targets` 登记使用该版本的 CI 产品名，以 `tools/ci_build_targets.py` 中的 `TARGETS` 为准：固件和内核分别可选 `uefi`、`linux`，根系统使用五个发行版目标。PipeWire 的 Debian 两桌面使用 1.6.9，Nyarch 使用 1.6.11，SteamOS 使用 1.6.8。GTK 3.24.52、IBus 1.5.34、KWin 6.6.5 和 Mesa 27.0 的本地系列由 SteamOS 配方使用。Nyarch 的 Material You Colors 30 和 Blur my Shell 75、SteamOS 的 KScreen 6.6.5 和 Manager 26.4.1 也通过各自版本的系列选择补丁。
 
 固件系列同时登记 `uefi` 和四个根系统目标，内核系列登记 `linux` 和四个根系统目标。F2FS 工具装入 Android 引导助手，不装进 Linux 根系统；四个根系统产品也会构建配套助手，因此其系列登记 `uefi` 和四个根系统目标。Gamescope 系列只由 `steamos` 使用。
 

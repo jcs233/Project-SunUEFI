@@ -15,6 +15,7 @@ case "$command" in
   boot-repack) python3 tools/build_boot_repack.py "$@" ;;
   ffmpeg) python3 tools/build_ffmpeg_packages.py "$@" ;;
   steamos-rootfs) python3 tools/build_steamos_rootfs.py "$@" ;;
+  arch-kde-rootfs) python3 tools/build_arch_kde_rootfs.py "$@" ;;
   nyarch-rootfs|nyarch-gnome-rootfs) python3 tools/build_nyarch_rootfs.py "$@" ;;
   gsd) python3 tools/build_gsd_packages.py "$@" ;;
   gdm) python3 tools/desktop/build_gdm_packages.py "$@" ;;
@@ -57,7 +58,7 @@ case "$command" in
   install) python3 tools/install_piano.py "$@" ;;
   installer) python3 tools/export_installer.py "$@" ;;
   help|-h|--help)
-    printf '%s\n' 'Usage: ./build.sh sources|check|uefi|trampoline|module|module-package|boot-request|boot-repack|linux|mesa|sensors|display-calibration|ffmpeg|gsd|gdm|pipewire|libwacom|mutter|bsp|rootfs|release-rootfs|steamos-rootfs|package|all|installer|install' \
+    printf '%s\n' 'Usage: ./build.sh sources|check|uefi|trampoline|module|module-package|boot-request|boot-repack|linux|mesa|sensors|display-calibration|ffmpeg|gsd|gdm|pipewire|libwacom|mutter|bsp|rootfs|release-rootfs|nyarch-gnome-rootfs|steamos-rootfs|arch-kde-rootfs|package|all|installer|install' \
       'Full builds need the documented builder environment; rootfs/Mesa/sensors run in a root ARM64 build container.' \
       'release-rootfs reads its kernel source worktree from build/release/source-manifest.json.' \
       'Building never partitions or flashes a tablet. install is a separate explicit command.' ;;

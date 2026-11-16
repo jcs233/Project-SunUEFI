@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'tools'))
 import ci_build_targets as targets
 
-PRODUCTS = ['debian-gnome', 'debian-kde', 'nyarch-gnome', 'steamos']
+PRODUCTS = ['debian-gnome', 'debian-kde', 'nyarch-gnome', 'arch-kde', 'steamos']
 
 
 class CiBuildTargetsTests(unittest.TestCase):

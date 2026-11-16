@@ -29,7 +29,7 @@ on:
       target:
         description: Product to build
         type: choice
-        options: [all, uefi, linux, debian-gnome, debian-kde, nyarch-gnome, steamos]
+        options: [all, uefi, linux, debian-gnome, debian-kde, nyarch-gnome, arch-kde, steamos]
         default: all
 
 permissions:
@@ -328,13 +328,13 @@ jobs:
             ffmpeg-sid-arm64-${{ hashFiles('config/release.json', 'linux/rootfs/debian.json', 'linux/bsp/patches/ffmpeg/**', 'patches/ffmpeg/**', 'tools/build_ffmpeg_packages.py', 'tools/build/debian.py', 'tools/prepare_ffmpeg_source.py', 'tools/desktop/**', 'containers/Dockerfile', 'config/build-container.json') }}-
       - id: pacman-mesa-cache
         name: Reuse completed native Mesa packages
-        if: matrix.target == 'nyarch-gnome' || matrix.target == 'steamos'
+        if: matrix.target == 'nyarch-gnome' || matrix.target == 'arch-kde' || matrix.target == 'steamos'
         uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: build/mesa-pacman/${{ matrix.target }}
-          key: mesa-pacman-${{ matrix.target }}-${{ hashFiles('config/mesa.json', 'config/nyarch.json', 'config/steamos.json', 'patches/mesa/**', 'tools/build/arch_mesa.py', 'tools/build/mesa.py', 'tools/build_arch_package.py', 'tools/desktop/package_build.py', 'containers/Dockerfile', 'config/build-container.json') }}-${{ github.run_id }}-${{ github.run_attempt }}
+          key: mesa-pacman-${{ matrix.target }}-${{ hashFiles('config/mesa.json', 'config/nyarch.json', 'config/arch-kde.json', 'config/steamos.json', 'patches/mesa/**', 'tools/build/arch_mesa.py', 'tools/build/mesa.py', 'tools/build_arch_package.py', 'tools/desktop/package_build.py', 'containers/Dockerfile', 'config/build-container.json') }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            mesa-pacman-${{ matrix.target }}-${{ hashFiles('config/mesa.json', 'config/nyarch.json', 'config/steamos.json', 'patches/mesa/**', 'tools/build/arch_mesa.py', 'tools/build/mesa.py', 'tools/build_arch_package.py', 'tools/desktop/package_build.py', 'containers/Dockerfile', 'config/build-container.json') }}-
+            mesa-pacman-${{ matrix.target }}-${{ hashFiles('config/mesa.json', 'config/nyarch.json', 'config/arch-kde.json', 'config/steamos.json', 'patches/mesa/**', 'tools/build/arch_mesa.py', 'tools/build/mesa.py', 'tools/build_arch_package.py', 'tools/desktop/package_build.py', 'containers/Dockerfile', 'config/build-container.json') }}-
       - id: sensors-cache
         name: Reuse completed Debian hardware packages
         if: startsWith(matrix.target, 'debian-')
@@ -426,7 +426,7 @@ jobs:
               .venv/bin/pip install -r requirements-build.txt
               . .venv/bin/activate
               case "$SUNUEFI_BUILD_TARGET" in
-                steamos|nyarch-gnome)
+                steamos|nyarch-gnome|arch-kde)
                   ./build.sh "$SUNUEFI_BUILD_TARGET-rootfs"
                   ./build.sh package \
                     --rootfs "build/distros/$SUNUEFI_BUILD_TARGET-piano/rootfs" \
@@ -454,7 +454,7 @@ jobs:
             build/mesa/SHA256SUMS
             build/mesa/*.changes
       - name: Save completed native Mesa packages
-        if: matrix.target == 'nyarch-gnome' || matrix.target == 'steamos'
+        if: matrix.target == 'nyarch-gnome' || matrix.target == 'arch-kde' || matrix.target == 'steamos'
         uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           key: ${{ steps.pacman-mesa-cache.outputs.cache-primary-key }}
@@ -564,12 +564,12 @@ jobs:
           retention-days: 7
           compression-level: 1
       - name: Prepare sparse root download
-        if: startsWith(matrix.target, 'debian-') || matrix.target == 'steamos' || matrix.target == 'nyarch-gnome'
+        if: startsWith(matrix.target, 'debian-') || matrix.target == 'steamos' || matrix.target == 'nyarch-gnome' || matrix.target == 'arch-kde'
         run: |
           mkdir -p artifacts/downloads/root
           cp artifacts/fastboot-sparse/root.ext4.img "artifacts/downloads/root/root-${SUNUEFI_BUILD_TARGET}.sparse.img"
       - name: Distribution sparse root
-        if: startsWith(matrix.target, 'debian-') || matrix.target == 'steamos' || matrix.target == 'nyarch-gnome'
+        if: startsWith(matrix.target, 'debian-') || matrix.target == 'steamos' || matrix.target == 'nyarch-gnome' || matrix.target == 'arch-kde'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: SunUEFI-Root-${{ matrix.target }}
@@ -589,6 +589,12 @@ jobs:
             config/steamos.json
             config/fingerprint.json
             config/nyarch.json
+            config/arch-kde.json
+            build/distros/arch-kde-piano/manifest.json
+            build/distros/arch-kde-piano/build.log
+            build/distros/arch-kde-piano/packages.tsv
+            build/distros/arch-kde-piano/localization.json
+            build/distros/arch-kde-piano/packages/ffmpeg/SOURCE.json
             build/distros/nyarch-gnome-piano/manifest.json
             build/distros/nyarch-gnome-piano/build.log
             build/distros/nyarch-gnome-piano/packages.tsv

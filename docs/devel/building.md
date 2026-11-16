@@ -9,7 +9,7 @@
 | UEFI 镜像、Android 引导助手模块 | x86_64 或 ARM64 的 Linux，装有 Docker | 普通容器 |
 | 完整系统镜像（Debian GNOME / KDE、Nyarch GNOME、SteamOS） | ARM64 的 Linux，装有 Docker | `--privileged`，用于 chroot 和挂载 |
 
-GitHub Actions 的 `uefi` 和 `linux` 目标在 x86_64 runner 上构建，四个发行版目标在 ARM64 runner 上构建。
+GitHub Actions 的 `uefi` 和 `linux` 目标在 x86_64 runner 上构建，五个发行版目标在 ARM64 runner 上构建。
 
 ## 取得源码和主机检查
 
@@ -68,6 +68,7 @@ docker run --rm -v "$PWD:/workspace" -w /workspace sunuefi-builder bash -euc '
 | `debian-gnome` | Debian sid + GNOME | `build/distros/release` |
 | `debian-kde` | Debian sid + KDE Plasma | `build/distros/release` |
 | `nyarch-gnome` | Arch Linux ARM + GNOME（Nyarch） | `build/distros/nyarch-gnome-piano` |
+| `arch-kde` | Arch Linux ARM + KDE，简体中文默认 | `build/distros/arch-kde-piano` |
 | `steamos` | Valve ARM64 SteamOS | `build/distros/steamos-piano` |
 
 默认内核是 Linux `7.3`，版本后缀 `-piano-sunuefi-cachy`。硬件适配、Gunyah 和对应版本的 CachyOS BORE 调度补丁按主题维护，固定输入见 [`patches/linux/7.3/series.json`](../../patches/linux/7.3/series.json)，当前选择记录在 `build/release/source-manifest.json`。内核和模块输出到 `artifacts/kernels/release/`。只准备内核源码用 `python3 tools/prepare_release_kernel.py --refresh`。具体改动见[内核与调度配置](linux/kernel.md)。
@@ -93,7 +94,7 @@ systemd 的 `ukify`，默认使用 `config/release.json` 固定的 Debian ARM64
 
 initramfs 的 BusyBox、分区识别工具和依赖库也由 `config/release.json` 固定并校验，
 在临时目录解包，不从各发行版根系统取库。内核模块和键盘固件使用共享产品的同一份输入，
-因此同次构建的四个系统可以使用同一个启动镜像。
+因此同次构建的五个系统可以使用同一个启动镜像。
 
 基础根系统已经构建过时，用 `./build.sh release-rootfs --resume` 更新内核、硬件包和配置，不重新运行 debootstrap。`./build.sh rootfs --distro ID --desktop ID --plan` 会列出其他发行版和桌面组合的计划，目前只有上表的四个目标能完整构建。
 
@@ -154,6 +155,7 @@ Debian 只构建 sid，不混用 stable 或 backports。`release-rootfs` 先生�
 ```sh
 ./build.sh uefi && ./build.sh module && ./build.sh linux
 ./build.sh nyarch-gnome-rootfs               # SteamOS 用 steamos-rootfs
+./build.sh arch-kde-rootfs                   # Arch Linux ARM + KDE
 ./build.sh package \
   --rootfs build/distros/nyarch-gnome-piano/rootfs \
   --rootfs-manifest build/distros/nyarch-gnome-piano/manifest.json \
@@ -162,7 +164,7 @@ Debian 只构建 sid，不混用 stable 或 backports。`release-rootfs` 先生�
 python3 tools/package_sparse_images.py --bundle artifacts/release --output artifacts/fastboot-sparse
 ```
 
-SteamOS 把命令里的 `nyarch-gnome-piano` 换成 `steamos-piano`。Nyarch 从 Arch Linux ARM 基础系统开始，通过签名仓库安装软件包，再构建 Nyarch 应用和 Piano 的原生硬件包，源码和扩展选择在 `config/nyarch.json`。SteamOS 的构建细节见 [SteamOS ARM64](linux/steamos.md)。
+SteamOS 把命令里的 `nyarch-gnome-piano` 换成 `steamos-piano`。Nyarch 从 Arch Linux ARM 基础系统开始，通过签名仓库安装软件包，再构建 Nyarch 应用和 Piano 的原生硬件包，源码和扩展选择在 `config/nyarch.json`。`arch-kde` 同样从 Arch Linux ARM 开始，装 KDE Plasma 和 SDDM，按 `config/arch-kde.json` 设置简体中文、`Asia/Shanghai` 时区与 IBus 拼音，硬件包与 Nyarch 共用。SteamOS 的构建细节见 [SteamOS ARM64](linux/steamos.md)。
 
 已有隔离的 ARM64 pacman 构建根目录时，可单独构建并安装完整 Mesa 包；此操作会修改指定的构建根目录，不要直接使用已交付的产品根目录：
 
@@ -206,7 +208,7 @@ GitHub Actions 的 **Build products** 在 `main` 上有相关改动时自动运�
 | `SunUEFI-Module` | Android 引导助手模块 ZIP |
 | `SunUEFI-UEFI-Fastboot` | 用于 `fastboot boot` 的独立 UEFI 镜像 |
 | `SunUEFI-ESP` | 各发行版共用的稀疏 ESP 镜像 |
-| `SunUEFI-Root-发行版` | 对应发行版的稀疏 root 镜像，发行版为 `debian-gnome`、`debian-kde`、`nyarch-gnome`、`steamos` |
+| `SunUEFI-Root-发行版` | 对应发行版的稀疏 root 镜像，发行版为 `debian-gnome`、`debian-kde`、`nyarch-gnome`、`arch-kde`、`steamos` |
 | `logs` | 合并的构建日志、来源清单和校验记录 |
 
 模块、UEFI 镜像和 ESP 每次只上传一份，root 镜像按发行版分别上传。安装时把所选发行版的 root 镜像和同一次构建的 ESP 配套使用，步骤见[安装指南](../user/install-from-artifact.md)。
