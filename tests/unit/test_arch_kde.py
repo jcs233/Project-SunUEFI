@@ -17,6 +17,9 @@ class ArchKdeRecipeTests(unittest.TestCase):
         self.assertEqual(cfg['locale']['timezone'], 'Asia/Shanghai')
         self.assertIn('noto-fonts-cjk', cfg['input_method']['packages'])
         self.assertIn('ibus-libpinyin', cfg['input_method']['packages'])
+        for package in ('pipewire-audio', 'gst-plugin-pipewire', 'libwacom',
+                        'libevdev', 'libgudev', 'base-devel'):
+            self.assertIn(package, cfg['packages'])
 
     def test_plan_accepts_arch_kde_with_localization_packages(self):
         options = assemble_rootfs.parser().parse_args([

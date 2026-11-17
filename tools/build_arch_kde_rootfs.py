@@ -97,6 +97,8 @@ def build(args):
     inputs = ROOT / 'build/arch-kde-inputs'
     inputs.mkdir(parents=True, exist_ok=True)
     base_hash = download_base(cfg, inputs)
+    extra_packages = list(dict.fromkeys([*cfg.get('packages', []),
+                                         *cfg['input_method']['packages']]))
     root = output / 'rootfs'
     if output.exists() and not args.resume:
         raise ValueError('Output already exists; use --resume for this build')
@@ -105,7 +107,7 @@ def build(args):
             '--distro', 'arch', '--desktop', 'kde', '--execute',
             '--output', str(output), '--base-file', str(inputs / 'ArchLinuxARM-aarch64.tar.gz'),
             '--base-url', cfg['base_url'], '--base-sha256', base_hash,
-            *sum((['--extra-package', name] for name in cfg['input_method']['packages']), [])])
+            *sum((['--extra-package', name] for name in extra_packages), [])])
         assemble_rootfs.execute(assemble_rootfs.plan(options))
     elif not (output / 'manifest.json').exists():
         raise ValueError('The base desktop assembly did not complete')
