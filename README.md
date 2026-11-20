@@ -1,5 +1,7 @@
 # Project SunUEFI
 
+**小米 15 标准版（dada）**：见[手机适配与复验说明](ports/dada/README.md)。本分支的手机镜像仅供开发验证；下文的平板安装器和发行版不适用于小米 15。
+
 > [!IMPORTANT]
 > **引用与署名**：引用、移植或基于本项目的内容（代码、数据、图片、结论）时，请在文档、说明页或发布页注明来源，并链接回 [Project SunUEFI](https://github.com/slwyts/Project-SunUEFI)。再分发代码时，请保留各文件原有的版权和许可证声明
 

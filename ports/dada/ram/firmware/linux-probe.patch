@@ -1,0 +1,48 @@
+--- a/Platforms/Xiaomi/dadaPkg/dada.dsc
++++ b/Platforms/Xiaomi/dadaPkg/dada.dsc
+@@ -79,24 +79,16 @@
+   ConfigurationMapLib|dadaPkg/Library/ConfigurationMapLib/ConfigurationMapLib.inf
+ 
+   #
+-  # UniXNU boot manager core (shared by the application and the registrar driver)
+   #
+-  UniXNULib|UniXNUPkg/Library/UniXNULib/UniXNULib.inf
+ 
+ [Components]
+   #
+   # Drivers
+   #
+   dadaPkg/Drivers/PmicKeysDxe/PmicKeysDxe.inf
+-  dadaPkg/Drivers/UefiTraceDxe/UefiTraceDxe.inf
+ 
+   #
+-  # UniXNU: the menu application, the registrar that makes the platform BDS start it, and the
+-  # DarwinBoot loader it hands the kernel to.
+   #
+-  UniXNUPkg/Application/UniXNU/UniXNU.inf
+-  UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.inf
+-  DarwinBootPkg/Driver/DarwinBoot.inf
+ 
+   #
+   # ACPI Tables
+--- a/Platforms/Xiaomi/dadaPkg/dada.fdf
++++ b/Platforms/Xiaomi/dadaPkg/dada.fdf
+@@ -109,11 +109,6 @@
+   # 防止内核启动时显示死（先关再开，1 ms delay）。
+   INF QcomPkg/Drivers/DisplayReEnablerDxe/DisplayReEnablerDxe.inf
+ 
+-  # UniXNU: the registrar publishes the application as the first Boot#### option, the application is
+-  # the menu, and DarwinBoot is the optional loader for type = "xnu" entries.
+-  INF UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.inf
+-  INF UniXNUPkg/Application/UniXNU/UniXNU.inf
+-  INF DarwinBootPkg/Driver/DarwinBoot.inf
+ 
+   !include QcomPkg/Extra.fdf.inc
+ 
+--- a/Platforms/Xiaomi/dadaPkg/Include/DXE.inc
++++ b/Platforms/Xiaomi/dadaPkg/Include/DXE.inc
+@@ -106,4 +106,3 @@
+   # Diagnostics: UEFI-side black box, writes \EFI\BOOT\dada-uefi-*.txt on the
+   # ESP.  Remove when not needed (see docs/uefi-fix.md §6.5).
+   #
+-  INF dadaPkg/Drivers/UefiTraceDxe/UefiTraceDxe.inf

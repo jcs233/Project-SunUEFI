@@ -1,0 +1,111 @@
+{
+  "combined_device_boot_verified": false,
+  "device_operation_performed": false,
+  "oem_signed": false,
+  "outputs": {
+    "combined-linux.img": {
+      "avb_hash_matches": true,
+      "bytes": 100663296,
+      "full_input_byte_equal": true,
+      "layout": {
+        "kernel_bytes": 47513600,
+        "kernel_relative_app": 40692208,
+        "kernel_relative_selector": 37494784,
+        "kernel_relative_shim": 37523456
+      },
+      "next_crc_valid": true,
+      "next_sequence": 1,
+      "next_target": 2,
+      "restore_catalog_bytes": 18368,
+      "restored_sha256": "7935a651b43945b020bd02744489e1f1f7eeff032bb6c245b70fd31b0c1e2a2f",
+      "sha256": "c38b6599a14f0fec155d3d85672b4ae79a18644436cb98cb2779e5be660682fe"
+    },
+    "combined-stock.img": {
+      "avb_hash_matches": true,
+      "bytes": 100663296,
+      "full_input_byte_equal": true,
+      "layout": {
+        "kernel_bytes": 47513600,
+        "kernel_relative_app": 40692208,
+        "kernel_relative_selector": 37494784,
+        "kernel_relative_shim": 37523456
+      },
+      "next_crc_valid": true,
+      "next_sequence": 0,
+      "next_target": 0,
+      "restore_catalog_bytes": 18368,
+      "restored_sha256": "7935a651b43945b020bd02744489e1f1f7eeff032bb6c245b70fd31b0c1e2a2f",
+      "sha256": "85cd83934df46d0f3ffb007a1b6f3b1d02dbf4d225ec2415d9bc2d3f991f1e20"
+    }
+  },
+  "probe": {
+    "app": {
+      "bytes": 6799424,
+      "sha256": "d67471777c4b1b3585841b32c2e0eddf3be03de181e3cad00f850222645de3b5"
+    },
+    "audit": {
+      "boot_bytes": 3416064,
+      "boot_sha256": "6190a6829c98e28ee9b0f0f0d7169e4a96417af6c646af3ac9f0af5592a6a40a",
+      "efi_bytes": 6799360,
+      "efi_sha256": "d77db9445c1555e45ff8688339d03d6049e04b4c223b49cac073b245c9dcdbe6",
+      "embedded_kernel_and_board_dtb_exact": true,
+      "fd_bytes": 3145728,
+      "guard_bytes": 23024,
+      "guard_sha256": "1f19f9b72ba94794b448c6a0f6df994f5bdd6f9507760bcdd1d9fdda7d203a62",
+      "inner_fv_bytes": 14110720,
+      "stock_base_sha256": "fa0062ce8e6dd5c3154b627d48a44f140e0fa8af492a76d2bb52e6a57ecb12fa"
+    },
+    "auditor_sha256_lf": "ec9505c2ef84efcd0b1262b3f5ee1d5c1b00e5fca03c09db3b9b6dc9a3cd7774",
+    "board_dtb": {
+      "bytes": 103389,
+      "sha256": "d4a5d96c4295ed7596a35411102639e31dfd9c96330a8b6abad31e2423039ad4"
+    },
+    "config_normalized_sha256": "783e3209fb197514d6b113b71a259578894c2486b4be1201bd790b0e73a0362d",
+    "fd": {
+      "bytes": 3145728,
+      "sha256": "69e1d29a8495a21e0b60b90406d4516ece8f957b772bfefc3608776da0b20f04"
+    },
+    "kernel": {
+      "bytes": 5372416,
+      "sha256": "066296a6607d6f5c18b6c83b3b60c44b0df5f96fb84143a999e22cd011fd4fc3"
+    },
+    "kind": "reference",
+    "next_generation_hex": "d67471777c4b1b3585841b32c2e0eddf"
+  },
+  "repacker": {
+    "bytes": 91712,
+    "commit": "c59285870c7438a7d9668cbe8f49596939fe6668",
+    "sha256": "dbd7cd0607fbdc0630b40e6a2e546e804aa82fd76c8d26d300d772ecc8226609",
+    "sources_sha256": "c01bd63b2f3a0069eda6f7952a21765bd378455120447b39f8d8df9f2ac90c0b"
+  },
+  "schema_version": 1,
+  "selector": {
+    "bytes": 12064,
+    "json_sha256": "1347340819459a1c7a582b0b0fadacd1df8a62fbe9af4e3d3f03feb6f99fa54b",
+    "memory_bytes": 28672,
+    "metadata_offset": 432,
+    "sha256": "c2b6b0f1f06b39ada1c8502c5abcecb9c5198a5612da707aaaac4a493999ca82"
+  },
+  "status": "HOST_FILES_VERIFIED",
+  "stock": {
+    "avb_hash_matches": true,
+    "bytes": 100663296,
+    "sha256": "7935a651b43945b020bd02744489e1f1f7eeff032bb6c245b70fd31b0c1e2a2f"
+  },
+  "unsigned_avb": {
+    "algorithm": "NONE",
+    "boot_hash_algorithm": "sha256",
+    "covered_bytes": 47517696,
+    "covered_offset": 0,
+    "default_descriptor_digest": "91812b9e1141c6779c8cb4e032f60a75c982193b9cba2aeef3346e8a0ce111c6",
+    "digest_file_offset": 47518088,
+    "expected_rehashed_file_sha256": "c38b6599a14f0fec155d3d85672b4ae79a18644436cb98cb2779e5be660682fe",
+    "linux_descriptor_digest": "63b774d570ad79bc899c20658fd2b5eba2b37979de5ccece69f17b58d7ef7822",
+    "native_request_file_sha256": "66e2e8a464182a767c24900d248fb028a094c3a28fc6ceaff2078ebf23798529",
+    "next_record_file_offset": 37490688,
+    "request_only_next_record_changed": true,
+    "salt_bytes": 0,
+    "vbmeta_bytes": 768,
+    "vbmeta_offset": 47517696
+  }
+}

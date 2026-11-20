@@ -1,0 +1,16 @@
+#!/bin/sh
+# PID 1 for the development ext4 root, not the RAM probe. No storage discovery,
+# fsck, automount, networking or remount-rw; only the selected / is used.
+set -eu
+export PATH=/bin:/sbin
+exec </dev/console >/dev/console 2>&1
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t tmpfs -o mode=0755,nosuid,nodev tmpfs /run
+mount -t tmpfs -o mode=1777,nosuid,nodev tmpfs /tmp
+fstype=$(awk '$2=="/" {print $3; exit}' /proc/mounts)
+opts=$(awk '$2=="/" {print $4; exit}' /proc/mounts)
+efi=no; [ ! -d /sys/firmware/efi ] || efi=yes
+printf 'DADA_ROOTFS kernel=%s efi=%s root_type=%s options=%s\n' "$(uname -r)" "$efi" "$fstype" "$opts"
+echo 'Development root. Local console only. No Android partitions mounted.'
+exec /bin/busybox init

@@ -1,0 +1,14 @@
+#!/bin/busybox sh
+# Only virtual filesystems. Internal storage drivers are not built.
+export PATH=/bin
+/bin/busybox mount -t devtmpfs devtmpfs /dev || exit 1
+/bin/busybox mount -t proc proc /proc || exit 1
+/bin/busybox mount -t sysfs sysfs /sys || exit 1
+/bin/busybox --install -s /bin
+exec </dev/console >/dev/console 2>&1
+model=$(tr -d '\000' </sys/firmware/devicetree/base/model 2>/dev/null)
+efi=no; [ ! -d /sys/firmware/efi ] || efi=yes
+echo "DADA_RAM_PROBE kernel=$(uname -r) efi=$efi model=$model"
+echo 'RAM-only Linux. No internal storage mounted. Reboot in 90 seconds.'
+(sleep 90; reboot -f) &
+while :; do sh -i; sleep 1; done
