@@ -5,7 +5,7 @@
 | 能力 | 验证到哪里 |
 |---|---|
 | 临时运行主线 Linux | 前一轮在 `dada` 上临时启动过独立的 RAM 镜像：屏幕出现 Linux 7.4-rc3 的 EFI 用户态标记，随后回到 Android。此内核不含 UFS 块驱动，不是桌面发行版。 |
-| 保留原 Android 与选择 Linux | 主机生成两份 96 MiB BOOT 文件。默认文件走原厂 GKI；显式 Linux 请求且现场设备树通过检查时，走手机自己的 guard → Mu → 固件内的 GRUB/Linux。没有使用平板的早期按键、显示、固定通信地址或写盘路径。此合体镜像未在真机启动。 |
+| 保留原 Android 与选择 Linux | 主机生成两份 96 MiB BOOT 文件。默认文件走原厂 GKI；显式 Linux 请求且现场设备树通过检查时，走手机自己的 guard → Mu → 固件内的 GRUB/Linux。没有使用平板的早期按键、显示、固定通信地址或写盘路径。初版默认镜像已在手机上临时启动，用户确认回到 Android；显式 Linux 的真机结果与模拟器结果分开记录。 |
 | 恢复原厂 BOOT | 两份合体文件都须通过上游文件还原，并与原厂输入逐字节相同才输出。此结果不等同于能恢复手机用户数据或 GPT。 |
 | 内置存储与桌面 | 已在 QEMU 上从同一块只读 GPT 的 ESP 和 ext4 启动至 shell；不是手机 UFS 证明。图形桌面、触控、GPU、无线、音频、休眠、Android 助手与 Windows on ARM **均不是此手机分支已实现的功能**。 |
 
@@ -59,8 +59,18 @@ python3 "$FORK/ports/dada/test-handoff.py" --stock "$RAM_ROOT/out/stock/OS4.0.4.
 
 - 两份 BOOT 的 unsigned AVB 内容摘要都匹配，且分别还原出了相同的 100,663,296 个原厂字节。精确输入和产物 SHA-256 在[主机验证记录](verification.json)。这些是离线变体，不是 Android 模块可直接接管的安装包。
 - ARM64 QEMU 共 6 例：默认 Android 和显式 Linux 分别到达预期入口；即使已选择 Linux，Recovery、关机充电、initrd 中显式 charger，以及没有可用现场 RAM 映射时，都回到原厂 GKI 入口。QEMU 在入口停下，不把跳到入口算作启动系统成功。
-- 另在已启动的手机上只读检查了原厂命令行，本地解析器识别到 `bootmonitor.bootmode=normal`；也解析了同版 OTA `vendor_boot` 中的静态 bootconfig。这不等同于已读取启动瞬间的完整设备树或 ABL 生成的 initrd。本次未重启手机。
+- 另在已启动的手机上只读检查了原厂命令行，本地解析器识别到 `bootmonitor.bootmode=normal`；也解析了同版 OTA `vendor_boot` 中的静态 bootconfig。这不等同于已读取启动瞬间的完整设备树或 ABL 生成的 initrd。
+
+**同一台手机的三次临时启动**（均未刷写或切槽；时间从主机开始传输计算）：
+
+| RAM 镜像 | Android 完成启动 | 结论 |
+|---|---:|---|
+| 初版默认 Android（`85cd8393…`） | 15.0 秒 | 用户在屏幕上确认已回到原厂系统。 |
+| 初版显式 Linux（`c38b6599…`） | 19.2 秒 | 此时 Android 已运行 12.76 秒，不符合探针会在用户态等待 90 秒的预期。 |
+| 修正版显式 Linux（`cc3bfd3a…`） | 120.4 秒 | 此时 Android 已运行 15.19 秒，推算 Android 内核约在传输后 105 秒启动；与独立 RAM 探针的时间特征相符，但不能单凭这个间隔确认进入 Linux 用户态。 |
+
+该 ROM 正常运行时报告 `bootmonitor.bootmode=normal` 和 `ro.boot.force_normal_boot=0`；主机重放确认初版会拒绝对应的 `androidboot.force_normal_boot=0`。修正版不再把“没有强制正常启动”解释为“进入恢复模式”。未知值仍拒绝，Recovery、充电、NEXT 和内存范围检查不变。上述结果不证明旧版在实机上究竟命中了哪一道检查。三次返回均为原 A 槽和原厂系统，系统指纹、vbmeta 摘要未变。仓库不附设备原始日志。
 
 ## 下一项真机验收
 
-先做一次**临时引导**验证：默认路径回到原厂 Android，显式 Linux 路径出现手机上的 EFI 用户态标记，重启后仍能进 Android；两种结果要分开记录。然后才是只读 UFS 枚举、主/备 GPT 核对、从指定分区只读挂载根卷。两项都通过之前，不用这些文件刷 `boot_a/b`、不改 GPT、不缩 `userdata`。平板 WebUI、图形选择器与桌面硬件适配要等各自的手机驱动和恢复路径，不是改个代号即可启用。
+默认路径已通过真机临时启动验证；显式 Linux 路径另需屏幕用户态标记或同等证据。然后才是只读 UFS 枚举、主/备 GPT 核对、从指定分区只读挂载根卷。两项都通过之前，不用这些文件刷 `boot_a/b`、不改 GPT、不缩 `userdata`。平板 WebUI、图形选择器与桌面硬件适配要等各自的手机驱动和恢复路径，不是改个代号即可启用。

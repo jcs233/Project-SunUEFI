@@ -44,7 +44,10 @@ static int field(text k, text v, int *normal) {
     }
     if ((IS(k,"androidboot.mode") || IS(k,"androidboot.bootmode") || IS(k,"androidboot.boot_mode") ||
          IS(k,"bootmode") || IS(k,"boot_mode")) && !IS(v,"normal")) return 0;
-    if (IS(k,"androidboot.force_normal_boot") && !IS(v,"1")) return 0;
+    /* Not forcing a normal boot is not an instruction to enter recovery.
+     * A completed normal Android boot on the pinned dada ROM reports 0.
+     * Neither 0 nor 1 grants Linux: require bootmonitor normal and NEXT=2. */
+    if (IS(k,"androidboot.force_normal_boot") && !IS(v,"0") && !IS(v,"1")) return 0;
     if (IS(k,"androidboot.product.hardware.sku") && !IS(v,"dada")) return 0;
     return 1;
 }

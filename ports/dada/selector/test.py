@@ -44,9 +44,17 @@ class Selector(unittest.TestCase):
             return bool(self.lib.dada_fields(raw, len(raw), 0, C.byref(n)) and n.value == 1)
         self.assertTrue(normal(NORMAL+' mca_log.charge_boot_mode=0 silent_boot.mode=nonsilent mtdoops.boot_mode=0'))
         self.assertTrue(normal(NORMAL+' androidboot.force_normal_boot=1 androidboot.mode=normal'))
+        # This phone's regular, completed Android boot reports ro.boot.force_normal_boot=0.
+        for force in ('0','1'):
+            key = 'androidboot.force_normal_boot='+force
+            self.assertTrue(normal(NORMAL+' '+key))
+            self.assertFalse(normal(key))
+            for other in ('bootmonitor.bootmode=recovery','bootmonitor.bootmode=poweroff_cg',
+                          NORMAL+' androidboot.mode=charger'):
+                self.assertFalse(normal(other+' '+key))
         self.assertFalse(normal('androidboot.mode=normal sunuefi.boot=linux'))
         for veto in [NORMAL, 'bootmonitor.bootmode=recovery', 'bootmonitor.bootmode=poweroff_cg',
-                     'bootmonitor.bootmode=unknown', 'androidboot.mode=charger', 'androidboot.force_normal_boot=0',
+                     'bootmonitor.bootmode=unknown', 'androidboot.mode=charger', 'androidboot.force_normal_boot=2',
                      'mca_log.charge_boot_mode=01', 'mca_log.charge_boot_mode', 'androidboot.bootreason=reboot,recovery']:
             for args in [NORMAL+' '+veto, veto+' '+NORMAL]:
                 with self.subTest(args=args): self.assertFalse(normal(args))
@@ -58,6 +66,9 @@ class Selector(unittest.TestCase):
             return bool(self.lib.dada_bootconfig(data, len(data), C.byref(C.c_int(1))))
         good = trailer(b'androidboot.force_normal_boot = "1"\nvendor.charger_log = "recovery stats"\n\0')
         self.assertTrue(okay(good+b'\0\0'))
+        self.assertTrue(okay(trailer(b'androidboot.force_normal_boot=0\n')))
+        self.assertFalse(okay(trailer(b'androidboot.force_normal_boot=0\nandroidboot.mode=charger\n')))
+        self.assertFalse(okay(trailer(b'androidboot.force_normal_boot=00\n')))
         bad_sum = bytearray(good); bad_sum[-16] ^= 1
         for bad in [bytes(bad_sum), good[:-1], b'no bootconfig', trailer(b'androidboot.mode = "charger"\n'),
                     trailer(b'bootmonitor.bootmode=poweroff_cg\n'), trailer(b'mca_log.charge_boot_mode=x'),

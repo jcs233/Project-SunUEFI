@@ -18,7 +18,7 @@
       "next_target": 2,
       "restore_catalog_bytes": 18368,
       "restored_sha256": "7935a651b43945b020bd02744489e1f1f7eeff032bb6c245b70fd31b0c1e2a2f",
-      "sha256": "c38b6599a14f0fec155d3d85672b4ae79a18644436cb98cb2779e5be660682fe"
+      "sha256": "cc3bfd3a4562da6f42f5c6696b842f5c65c7ba086abd3ec0549863a5a98e712d"
     },
     "combined-stock.img": {
       "avb_hash_matches": true,
@@ -35,7 +35,7 @@
       "next_target": 0,
       "restore_catalog_bytes": 18368,
       "restored_sha256": "7935a651b43945b020bd02744489e1f1f7eeff032bb6c245b70fd31b0c1e2a2f",
-      "sha256": "85cd83934df46d0f3ffb007a1b6f3b1d02dbf4d225ec2415d9bc2d3f991f1e20"
+      "sha256": "01241465e053b1aad4ef8228b869b5b15ebc576c81e806e40bfdeb6913a74be5"
     }
   },
   "probe": {
@@ -80,11 +80,11 @@
   },
   "schema_version": 1,
   "selector": {
-    "bytes": 12064,
+    "bytes": 12096,
     "json_sha256": "1347340819459a1c7a582b0b0fadacd1df8a62fbe9af4e3d3f03feb6f99fa54b",
     "memory_bytes": 28672,
     "metadata_offset": 432,
-    "sha256": "c2b6b0f1f06b39ada1c8502c5abcecb9c5198a5612da707aaaac4a493999ca82"
+    "sha256": "79c2e4a3988a6a646ba73016a6ac6be3c0b9ee9bbf51df8905e12acf20a60e23"
   },
   "status": "HOST_FILES_VERIFIED",
   "stock": {
@@ -97,11 +97,11 @@
     "boot_hash_algorithm": "sha256",
     "covered_bytes": 47517696,
     "covered_offset": 0,
-    "default_descriptor_digest": "91812b9e1141c6779c8cb4e032f60a75c982193b9cba2aeef3346e8a0ce111c6",
+    "default_descriptor_digest": "4ed81d176bdb91f3347eb3f0d08c27422f5c851d461cc17410ff80607f16e223",
     "digest_file_offset": 47518088,
-    "expected_rehashed_file_sha256": "c38b6599a14f0fec155d3d85672b4ae79a18644436cb98cb2779e5be660682fe",
-    "linux_descriptor_digest": "63b774d570ad79bc899c20658fd2b5eba2b37979de5ccece69f17b58d7ef7822",
-    "native_request_file_sha256": "66e2e8a464182a767c24900d248fb028a094c3a28fc6ceaff2078ebf23798529",
+    "expected_rehashed_file_sha256": "cc3bfd3a4562da6f42f5c6696b842f5c65c7ba086abd3ec0549863a5a98e712d",
+    "linux_descriptor_digest": "2cf245b6dfc648953122dde1b893f7b761567aacd4b1e4f5e0044f741f9b9297",
+    "native_request_file_sha256": "2914682fb31ac287410e03363e830f0d1c3fd6d74677c2efe583de75ebe1378c",
     "next_record_file_offset": 37490688,
     "request_only_next_record_changed": true,
     "salt_bytes": 0,

@@ -151,7 +151,7 @@ def main():
             cmdline = 'mca_log.charge_boot_mode=0 silent_boot.mode=nonsilent mtdoops.boot_mode=0 bootmonitor.bootmode='+mode
             subprocess.run(['fdtput', '-t', 's', dt, '/chosen', 'bootargs', cmdline], check=True)
             # Realistic initrd bounds and a small, flat Android bootconfig trailer.
-            config = f'androidboot.mode = "{config_mode}"\n'.encode()
+            config = f'androidboot.force_normal_boot = "0"\nandroidboot.mode = "{config_mode}"\n'.encode()
             ramdisk = bytes(4096) + config + struct.pack('<II', len(config), sum(config)) + b'#BOOTCONFIG\n'
             initrd = tmp/'initrd.bin'
             initrd.write_bytes(ramdisk)
